@@ -1,0 +1,4 @@
+body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
+.header { background: #222; color: #fff; padding: 16px; display:flex; align-items:center; justify-content:space-between; }
+.header a { color: #fff; text-decoration: none; margin-right: 12px; }
+.container { padding: 20px; }

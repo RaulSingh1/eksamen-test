@@ -7,21 +7,64 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  <header class="header">
-    <h1><a href="/">WCAG Vurderingssystem</a></h1>
-    <nav>
-      <a href="/websites">Nettsider</a>
-      <a href="/reviews">Vurderinger</a>
+
+<header class="header">
+  <div class="logo">
+    <h1>WCAG Vurderingssystem</h1>
+  </div>
+
+  <nav>
+    <a href="/">Forside</a>
+    <a href="/websites">Nettsider</a>
+    <a href="/reviews">Vurderinger</a>
+
+    <% if (!user) { %>
       <a href="/auth/login">Logg inn</a>
-      <a href="/auth/register">Registrer</a>
-    </nav>
-  </header>
+      <a href="/auth/register" class="btn-primary">Registrer</a>
+    <% } else { %>
+      <span class="welcome">Hei, <%= user.username %></span>
+      <a href="/auth/logout">Logg ut</a>
+    <% } %>
+  </nav>
+</header>
 
-  <main class="container">
-    <h2>Forside</h2>
-    <p>Dette er startside. Her kan du senere vise rangering av nettsider.</p>
-  </main>
+<section class="hero">
+  <h2>Evaluer nettsider etter WCAG-standard</h2>
+  <p>
+    Denne plattformen lar deg analysere og vurdere nettsider basert på
+    tilgjengelighetskravene i WCAG. Sammen kan vi gjøre nettet mer universelt utformet.
+  </p>
 
-  <script src="/js/main.js"></script>
+  <div class="hero-buttons">
+    <a href="/websites" class="btn-primary">Se nettsider</a>
+    <% if (!user) { %>
+      <a href="/auth/register" class="btn-secondary">Opprett konto</a>
+    <% } else { %>
+      <a href="/websites/new" class="btn-secondary">Legg til nettside</a>
+    <% } %>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature-card">
+    <h3> Registrer nettsider</h3>
+    <p>Legg inn nettsider du ønsker å analysere og følge opp.</p>
+  </div>
+
+  <div class="feature-card">
+    <h3> Gi vurderinger</h3>
+    <p>Vurder tilgjengelighet basert på WCAG-kriterier.</p>
+  </div>
+
+  <div class="feature-card">
+    <h3> Sammenlign resultater</h3>
+    <p>Se hvilke nettsider som scorer best på universell utforming.</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>© 2026 WCAG Vurderingssystem – Raul Singh</p>
+</footer>
+
 </body>
 </html>

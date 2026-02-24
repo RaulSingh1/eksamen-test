@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title || website.name %></title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <h1><a href="/">WCAG Vurderingssystem</a></h1>
+    <nav>
+      <a href="/">Forside</a>
+      <a href="/websites">Nettsider</a>
+      <a href="/reviews">Vurderinger</a>
+    </nav>
+  </header>
+
+  <main class="website-list-section">
+    <article class="website-list-item">
+      <h2><%= website.name %></h2>
+      <p>
+        <a href="<%= website.url %>" target="_blank" rel="noopener noreferrer">
+          Besøk nettsiden
+        </a>
+      </p>
+      <p><strong>Kort beskrivelse:</strong> <%= website.description || "Ingen beskrivelse." %></p>
+      <p><strong>Vurdering:</strong> <%= website.review || "Ingen vurdering enda." %></p>
+      <p><strong>Lagt til av:</strong> <%= website.user?.username || "Ukjent bruker" %></p>
+
+      <% if (website.imageData) { %>
+        <img src="<%= website.imageData %>" alt="Bilde av nettsiden <%= website.name %>" class="detail-image" />
+      <% } %>
+
+      <div class="vote-row">
+        <% if (user) { %>
+          <% const likedWebsite = (website.likedBy || []).some(id => String(id) === String(user._id)); %>
+          <% const dislikedWebsite = (website.dislikedBy || []).some(id => String(id) === String(user._id)); %>
+          <form method="POST" action="/websites/<%= website._id %>/like">
+            <button type="submit" class="btn-vote <%= likedWebsite ? 'active-like' : '' %>">👍 <%= website.likes %></button>
+          </form>
+          <form method="POST" action="/websites/<%= website._id %>/dislike">
+            <button type="submit" class="btn-vote <%= dislikedWebsite ? 'active-dislike' : '' %>">👎 <%= website.dislikes %></button>
+          </form>
+        <% } else { %>
+          <p>Logg inn for å gi tommel opp/ned.</p>
+        <% } %>
+      </div>
+
+      <section class="comments-section">
+        <h3>Kommentarer</h3>
+        <% if (user) { %>
+          <form method="POST" action="/websites/<%= website._id %>/comment" class="comment-form">
+            <textarea name="text" rows="3" placeholder="Skriv en kommentar..." required></textarea>
+            <button type="submit" class="btn-primary">Legg til kommentar</button>
+          </form>
+        <% } else { %>
+          <p>Logg inn for å kommentere.</p>
+        <% } %>
+
+        <% if (!comments || comments.length === 0) { %>
+          <p>Ingen kommentarer enda.</p>
+        <% } else { %>
+          <% comments.forEach(comment => { %>
+            <div class="comment-card">
+              <strong><%= comment.user?.username || "Ukjent bruker" %></strong>
+              <p><%= comment.text %></p>
+
+              <% if (user) { %>
+                <% const likedComment = (comment.likedBy || []).some(id => String(id) === String(user._id)); %>
+                <% const dislikedComment = (comment.dislikedBy || []).some(id => String(id) === String(user._id)); %>
+                <div class="vote-row">
+                  <form method="POST" action="/websites/<%= website._id %>/comments/<%= comment._id %>/like">
+                    <button type="submit" class="btn-vote <%= likedComment ? 'active-like' : '' %>">👍 <%= comment.likes || 0 %></button>
+                  </form>
+                  <form method="POST" action="/websites/<%= website._id %>/comments/<%= comment._id %>/dislike">
+                    <button type="submit" class="btn-vote <%= dislikedComment ? 'active-dislike' : '' %>">👎 <%= comment.dislikes || 0 %></button>
+                  </form>
+                </div>
+
+                <details class="reply-box">
+                  <summary>Svar</summary>
+                  <form method="POST" action="/websites/<%= website._id %>/comment" class="comment-form">
+                    <input type="hidden" name="parentCommentId" value="<%= comment._id %>" />
+                    <textarea name="text" rows="2" placeholder="Skriv et svar..." required></textarea>
+                    <button type="submit" class="btn-primary">Publiser svar</button>
+                  </form>
+                </details>
+              <% } %>
+
+              <% const replies = repliesByParent[String(comment._id)] || []; %>
+              <% if (replies.length > 0) { %>
+                <div class="replies">
+                  <% replies.forEach(reply => { %>
+                    <div class="comment-card reply-card">
+                      <strong><%= reply.user?.username || "Ukjent bruker" %></strong>
+                      <p><%= reply.text %></p>
+
+                      <% if (user) { %>
+                        <% const likedReply = (reply.likedBy || []).some(id => String(id) === String(user._id)); %>
+                        <% const dislikedReply = (reply.dislikedBy || []).some(id => String(id) === String(user._id)); %>
+                        <div class="vote-row">
+                          <form method="POST" action="/websites/<%= website._id %>/comments/<%= reply._id %>/like">
+                            <button type="submit" class="btn-vote <%= likedReply ? 'active-like' : '' %>">👍 <%= reply.likes || 0 %></button>
+                          </form>
+                          <form method="POST" action="/websites/<%= website._id %>/comments/<%= reply._id %>/dislike">
+                            <button type="submit" class="btn-vote <%= dislikedReply ? 'active-dislike' : '' %>">👎 <%= reply.dislikes || 0 %></button>
+                          </form>
+                        </div>
+                      <% } %>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } %>
+            </div>
+          <% }) %>
+        <% } %>
+      </section>
+
+      <% if (user && website.user && String(website.user._id) === String(user._id)) { %>
+        <form method="POST" action="/websites/<%= website._id %>/delete">
+          <button type="submit" class="btn-danger">Slett vurdering</button>
+        </form>
+      <% } %>
+    </article>
+  </main>
+</body>
+</html>

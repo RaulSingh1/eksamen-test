@@ -1,0 +1,15 @@
+{
+  "legacyWatch": true,
+  "watch": [
+    "app.js",
+    "routes",
+    "controllers",
+    "models",
+    "views"
+  ],
+  "ext": "js,json,ejs",
+  "ignore": [
+    "node_modules",
+    "public"
+  ]
+}

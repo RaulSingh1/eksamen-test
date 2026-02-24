@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.render("reviews/list", { title: "Vurderinger" });
-});
+const authController = require("../controllers/authController");
+const websiteController = require("../controllers/websiteController");
 
-router.get("/new", (req, res) => {
-  res.render("reviews/new", { title: "Skriv vurdering" });
-});
+// Liste er åpen for alle
+router.get("/", websiteController.list);
+
+// Bare innlogget kan legge til
+router.get("/new", authController.requireLogin, websiteController.newPage);
+router.post("/", authController.requireLogin, websiteController.create);
 
 module.exports = router;

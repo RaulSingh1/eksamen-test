@@ -2,36 +2,61 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title || "Nettsider" %></title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
   <header class="header">
     <h1><a href="/">WCAG Vurderingssystem</a></h1>
     <nav>
-      <a href="/websites/new">Legg til nettside</a>
+      <a href="/">Forside</a>
+      <a href="/websites">Nettsider</a>
+      <a href="/reviews">Vurderinger</a>
+      <% if (!user) { %>
+        <a href="/auth/login">Logg inn</a>
+      <% } else { %>
+        <span class="welcome">Hei, <%= user.username %></span>
+        <a href="/auth/logout">Logg ut</a>
+      <% } %>
     </nav>
   </header>
 
-  <main class="container">
-    <h2>Nettsider</h2>
+  <main class="website-list-section">
+    <div class="website-list-header">
+      <h2>Nettsider lagt til av brukere</h2>
+      <% if (user) { %>
+        <a href="/websites/new" class="btn-primary">+ Legg til nettside</a>
+      <% } else { %>
+        <a href="/auth/login" class="btn-primary">Logg inn for å legge til</a>
+      <% } %>
+    </div>
 
-    <% if (websites.length === 0) { %>
+    <% if (!websites || websites.length === 0) { %>
       <p>Ingen nettsider lagt til enda.</p>
+    <% } else { %>
+      <ul class="website-list">
+        <% websites.forEach(site => { %>
+          <li class="website-list-item">
+            <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer">
+              <strong><%= site.name %></strong>
+            </a>
+            <p><%= site.description || "Ingen beskrivelse." %></p>
+            <p><strong>Vurdering:</strong> <%= site.review || "Ingen vurdering enda." %></p>
+            <% if (site.imageData) { %>
+              <img src="<%= site.imageData %>" alt="Bilde av <%= site.name %>" class="thumb-image" />
+            <% } %>
+            <small>Lagt til av: <%= site.user?.username || "Ukjent bruker" %></small>
+            <p><a href="/websites/<%= site._id %>">Se detaljer</a></p>
+            <% if (user && site.user && String(site.user._id) === String(user._id)) { %>
+              <form method="POST" action="/websites/<%= site._id %>/delete">
+                <button type="submit" class="btn-danger">Slett vurdering</button>
+              </form>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
     <% } %>
-
-    <ul>
-      <% websites.forEach(site => { %>
-        <li>
-          <strong><%= site.name %></strong> –
-          <a href="<%= site.url %>" target="_blank">Besøk</a>
-          <br/>
-          <small><%= site.description || "Ingen beskrivelse" %></small>
-        </li>
-        <br/>
-      <% }) %>
-    </ul>
   </main>
 </body>
 </html>

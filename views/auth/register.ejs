@@ -1,20 +1,53 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrer</title>
-  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  <header class="header">
-    <h1><a href="/">WCAG Vurderingssystem</a></h1>
-  </header>
 
-  <main class="container">
-    <h2>Registrer</h2>
-    <p>Dette er en placeholder. Senere legger vi inn ekte registrering.</p>
+<header class="header">
+  <h1>WCAG Vurderingssystem</h1>
+  <nav>
+    <a href="/">Forside</a>
+    <a href="/websites">Nettsider</a>
+    <a href="/reviews">Vurderinger</a>
     <a href="/auth/login">Logg inn</a>
-  </main>
+  </nav>
+</header>
+
+<section class="auth-container">
+  <div class="auth-card">
+    <h2>Opprett konto</h2>
+
+    <% if (error) { %>
+      <div class="error-box"><%= error %></div>
+    <% } %>
+
+    <form method="POST" action="/auth/register">
+      <label>Brukernavn</label>
+      <input type="text" name="username" required>
+
+      <label>Email</label>
+      <input type="email" name="email" required>
+
+      <label>Passord</label>
+      <input type="password" name="password" required>
+
+      <label>Gjenta passord</label>
+      <input type="password" name="passwordConfirm" required>
+
+      <button type="submit" class="btn-primary full">Registrer</button>
+    </form>
+
+    <p class="auth-link">
+      Har du allerede konto?
+      <a href="/auth/login">Logg inn her</a>
+    </p>
+  </div>
+</section>
+
 </body>
 </html>

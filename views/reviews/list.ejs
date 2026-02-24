@@ -2,21 +2,50 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= title %></title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
   <header class="header">
     <h1><a href="/">WCAG Vurderingssystem</a></h1>
+
     <nav>
-      <a href="/reviews/new">Skriv vurdering</a>
+      <a href="/websites">Nettsider</a>
+      <% if (user) { %>
+        <span>Hei, <%= user.username %></span>
+        <a href="/auth/logout">Logout</a>
+      <% } else { %>
+        <a href="/auth/login">Login</a>
+        <a href="/auth/register">Register</a>
+      <% } %>
     </nav>
   </header>
 
   <main class="container">
-    <h2>Vurderinger</h2>
-    <p>(Placeholder) Her kommer liste over vurderinger.</p>
+    <h2>Nettsider</h2>
+
+    <% if (user) { %>
+      <a href="/websites/new">+ Legg til nettside</a>
+    <% } else { %>
+      <p><a href="/auth/login">Logg inn</a> for å legge til nettside</p>
+    <% } %>
+
+    <hr />
+
+    <% if (!websites || websites.length === 0) { %>
+      <p>Ingen nettsider enda.</p>
+    <% } %>
+
+    <% websites.forEach(w => { %>
+      <div style="margin-bottom:20px;">
+        <h3><%= w.name %></h3>
+        <a href="<%= w.url %>" target="_blank"><%= w.url %></a>
+        <p><%= w.description %></p>
+        <small>Lagt til av: <%= w.user?.username || "Ukjent" %></small>
+        <hr />
+      </div>
+    <% }) %>
   </main>
 </body>
 </html>

@@ -27,8 +27,9 @@ exports.registerPage = (req, res) => {
 exports.register = async (req, res) => {
   try {
     const { username, email, password, passwordConfirm } = req.body;
+    const normalizedEmail = String(email || "").trim().toLowerCase();
 
-    if (!username || !email || !password || !passwordConfirm) {
+    if (!username || !normalizedEmail || !password || !passwordConfirm) {
       return res.render("auth/register", { error: "Fyll ut alle feltene" });
     }
 
@@ -36,7 +37,7 @@ exports.register = async (req, res) => {
       return res.render("auth/register", { error: "Passordene er ikke like" });
     }
 
-    const existing = await User.findOne({ email });
+    const existing = await User.findOne({ email: normalizedEmail });
     if (existing) {
       return res.render("auth/register", {
         error: "Email finnes allerede"
@@ -50,9 +51,9 @@ exports.register = async (req, res) => {
       });
     }
 
-    const role = email.toLowerCase() === OWNER_EMAIL ? "admin" : "user";
+    const role = normalizedEmail === OWNER_EMAIL ? "admin" : "user";
 
-    const user = new User({ username, email, password, role });
+    const user = new User({ username, email: normalizedEmail, password, role });
     await user.save();
 
     req.session.user = {
@@ -77,8 +78,9 @@ exports.loginPage = (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const normalizedEmail = String(email || "").trim().toLowerCase();
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
       return res.render("auth/login", {
         error: "Bruker finnes ikke"

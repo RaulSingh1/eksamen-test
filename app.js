@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 
 app.use(session({
-  secret: "supersecret",
+  secret: process.env.SESSION_SECRET || "change-me-in-env",
   resave: false,
   saveUninitialized: false
 }));

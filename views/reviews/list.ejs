@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %></title>
+  <title><%= title || "Vurderinger" %></title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
@@ -11,41 +11,46 @@
     <h1><a href="/">WCAG Vurderingssystem</a></h1>
 
     <nav>
+      <a href="/">Forside</a>
       <a href="/websites">Nettsider</a>
+      <a href="/reviews">Vurderinger</a>
+      <a href="/faq">FAQ</a>
       <% if (user) { %>
         <span>Hei, <%= user.username %></span>
-        <a href="/auth/logout">Logout</a>
+        <% if (user.role === "admin") { %>
+          <a href="/admin/reports">Admin</a>
+        <% } %>
+        <a href="/auth/logout">Logg ut</a>
       <% } else { %>
-        <a href="/auth/login">Login</a>
-        <a href="/auth/register">Register</a>
+        <a href="/auth/login">Logg inn</a>
+        <a href="/auth/register">Registrer</a>
       <% } %>
     </nav>
   </header>
 
-  <main class="container">
-    <h2>Nettsider</h2>
-
-    <% if (user) { %>
-      <a href="/websites/new">+ Legg til nettside</a>
-    <% } else { %>
-      <p><a href="/auth/login">Logg inn</a> for å legge til nettside</p>
-    <% } %>
-
-    <hr />
+  <main class="website-list-section">
+    <div class="website-list-header">
+      <h2>Vurderinger</h2>
+      <% if (user) { %>
+        <a href="/reviews/new" class="btn-primary">+ Ny vurdering</a>
+      <% } %>
+    </div>
 
     <% if (!websites || websites.length === 0) { %>
-      <p>Ingen nettsider enda.</p>
+      <p>Ingen vurderinger enda.</p>
+    <% } else { %>
+      <ul class="website-list">
+        <% websites.forEach(w => { %>
+          <li class="website-list-item">
+            <h3><%= w.name %></h3>
+            <a href="<%= w.url %>" target="_blank" rel="noopener noreferrer"><%= w.url %></a>
+            <p><strong>Vurdering:</strong> <%= w.review || "Ingen vurdering enda." %></p>
+            <small>Lagt ut av: <%= w.user?.username || "Ukjent bruker" %></small>
+            <p><a href="/reviews/<%= w._id %>">Se detaljer</a></p>
+          </li>
+        <% }) %>
+      </ul>
     <% } %>
-
-    <% websites.forEach(w => { %>
-      <div style="margin-bottom:20px;">
-        <h3><%= w.name %></h3>
-        <a href="<%= w.url %>" target="_blank"><%= w.url %></a>
-        <p><%= w.description %></p>
-        <small>Lagt til av: <%= w.user?.username || "Ukjent" %></small>
-        <hr />
-      </div>
-    <% }) %>
   </main>
 </body>
 </html>

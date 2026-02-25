@@ -1,8 +1,19 @@
 const User = require("../models/User");
+const OWNER_EMAIL = (process.env.OWNER_EMAIL || "raula9413@gmail.com").toLowerCase();
 
 exports.requireLogin = (req, res, next) => {
   if (!req.session.user) {
     return res.redirect("/auth/login");
+  }
+  next();
+};
+
+exports.requireAdmin = (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/auth/login");
+  }
+  if (req.session.user.role !== "admin") {
+    return res.status(403).send("Kun admin har tilgang.");
   }
   next();
 };
@@ -39,13 +50,16 @@ exports.register = async (req, res) => {
       });
     }
 
-    const user = new User({ username, email, password });
+    const role = email.toLowerCase() === OWNER_EMAIL ? "admin" : "user";
+
+    const user = new User({ username, email, password, role });
     await user.save();
 
     req.session.user = {
       _id: user._id,
       username: user.username,
-      email: user.email
+      email: user.email,
+      role: user.role || "user"
     };
 
     res.redirect("/");
@@ -78,10 +92,26 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Owner account is the only admin account.
+    if (user.email.toLowerCase() === OWNER_EMAIL) {
+      if (user.role !== "admin") {
+        user.role = "admin";
+        await user.save();
+      }
+      await User.updateMany(
+        { _id: { $ne: user._id }, role: "admin" },
+        { $set: { role: "user" } }
+      );
+    } else if (user.role === "admin") {
+      user.role = "user";
+      await user.save();
+    }
+
     req.session.user = {
       _id: user._id,
       username: user.username,
-      email: user.email
+      email: user.email,
+      role: user.role || "user"
     };
 
     res.redirect("/");

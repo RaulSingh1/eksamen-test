@@ -45,10 +45,14 @@ app.use((req, res, next) => {
 const authRoutes = require("./routes/authRoutes");
 const websiteRoutes = require("./routes/websiteRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const faqRoutes = require("./routes/faqRoutes");
 
 app.use("/auth", authRoutes);
 app.use("/websites", websiteRoutes);
 app.use("/reviews", reviewRoutes);
+app.use("/admin", adminRoutes);
+app.use("/faq", faqRoutes);
 
 app.get("/", (req, res) => {
   res.render("index", { title: "Forside" });

@@ -3,36 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %></title>
+  <title><%= title || "Ny vurdering" %></title>
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
   <header class="header">
     <h1><a href="/">WCAG Vurderingssystem</a></h1>
+    <nav>
+      <a href="/">Forside</a>
+      <a href="/websites">Nettsider</a>
+      <a href="/reviews">Vurderinger</a>
+      <a href="/faq">FAQ</a>
+      <% if (user && user.role === "admin") { %>
+        <a href="/admin/reports">Admin</a>
+      <% } %>
+      <a href="/auth/logout">Logg ut</a>
+    </nav>
   </header>
 
-  <main class="container">
-    <h2>Legg til nettside</h2>
+  <main class="form-page">
+    <section class="form-card">
+      <h2>Ny vurdering</h2>
+      <p>Fyll inn nettside, vurdering og bilde.</p>
 
-    <% if (error) { %>
-      <p style="color:red;"><%= error %></p>
-    <% } %>
+      <% if (error) { %>
+        <div class="error-box"><%= error %></div>
+      <% } %>
 
-    <form action="/websites" method="POST">
-      <label>Navn</label>
-      <input type="text" name="name" required />
+      <form action="/reviews" method="POST">
+        <label for="name">Navn på nettside</label>
+        <input id="name" type="text" name="name" required />
 
-      <label>URL</label>
-      <input type="url" name="url" required />
+        <label for="url">Link til nettside</label>
+        <input id="url" type="url" name="url" placeholder="https://eksempel.no" required />
 
-      <label>Beskrivelse</label>
-      <textarea name="description"></textarea>
+        <label for="description">Kort beskrivelse</label>
+        <textarea id="description" name="description" rows="3"></textarea>
 
-      <button type="submit">Lagre</button>
-    </form>
+        <label for="review">Din vurdering</label>
+        <textarea id="review" name="review" rows="5" required></textarea>
 
-    <hr />
-    <a href="/websites">Tilbake</a>
+        <label for="imageFile">Bilde av nettsiden (fra dine filer)</label>
+        <input id="imageFile" type="file" accept="image/*" />
+        <input id="imageData" type="hidden" name="imageData" />
+        <img id="imagePreview" class="image-preview hidden" alt="Forhåndsvisning av opplastet bilde" />
+
+        <button type="submit" class="btn-primary full">Lagre vurdering</button>
+      </form>
+    </section>
   </main>
+
+  <script>
+    const imageInput = document.getElementById("imageFile");
+    const imageDataInput = document.getElementById("imageData");
+    const preview = document.getElementById("imagePreview");
+
+    imageInput.addEventListener("change", () => {
+      const file = imageInput.files && imageInput.files[0];
+      if (!file) {
+        imageDataInput.value = "";
+        preview.src = "";
+        preview.classList.add("hidden");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        imageDataInput.value = String(reader.result || "");
+        preview.src = imageDataInput.value;
+        preview.classList.remove("hidden");
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
 </body>
 </html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <h1><a href="/">WCAG Vurderingssystem</a></h1>
+    <nav>
+      <a href="/">Forside</a>
+      <a href="/websites">Nettsider</a>
+      <a href="/reviews">Vurderinger</a>
+      <a href="/faq">FAQ</a>
+      <% if (user) { %>
+        <a href="/auth/logout">Logg ut</a>
+      <% } else { %>
+        <a href="/auth/login">Logg inn</a>
+      <% } %>
+    </nav>
+  </header>
+
+  <main class="website-list-section">
+    <h2>FAQ</h2>
+
+    <div class="feature-card">
+      <h3>Hvordan legger jeg inn en vurdering?</h3>
+      <p>Gå til "Vurderinger" og klikk "Ny vurdering".</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Hvordan fungerer tommel opp/ned?</h3>
+      <p>Du kan ha én aktiv stemme. Klikk igjen for å angre eller bytt mellom opp/ned.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Hvordan rapporterer jeg en vurdering?</h3>
+      <p>På detaljsiden for en vurdering finner du et rapporteringsskjema med kommentar.</p>
+    </div>
+  </main>
+</body>
+</html>

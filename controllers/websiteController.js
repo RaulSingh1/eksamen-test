@@ -3,7 +3,7 @@ const Website = require("../models/Website");
 // GET /websites
 exports.list = async (req, res) => {
   const websites = await Website.find()
-    .populate("user", "email")
+    .populate("user", "username")
     .sort({ createdAt: -1 });
 
   res.render("websites/list", { title: "Nettsider", websites });

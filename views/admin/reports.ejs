@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <h1><a href="/">WCAG Vurderingssystem</a></h1>
+    <nav>
+      <a href="/">Forside</a>
+      <a href="/websites">Nettsider</a>
+      <a href="/reviews">Vurderinger</a>
+      <a href="/faq">FAQ</a>
+      <a href="/auth/logout">Logg ut</a>
+    </nav>
+  </header>
+
+  <main class="website-list-section">
+    <h2>Rapporter til admin</h2>
+
+    <% if (!reports || reports.length === 0) { %>
+      <p>Ingen rapporter.</p>
+    <% } else { %>
+      <ul class="website-list">
+        <% reports.forEach(report => { %>
+          <li class="website-list-item">
+            <h3><%= report.website?.name || "Slettet innlegg" %></h3>
+            <p><strong>Rapportert av:</strong> <%= report.reportedBy?.username || "Ukjent" %></p>
+            <p><strong>Kommentar:</strong> <%= report.comment %></p>
+            <p><strong>Status:</strong> <%= report.status %></p>
+
+            <% if (report.website?._id) { %>
+              <p><a href="/reviews/<%= report.website._id %>">Åpne vurdering</a></p>
+              <form method="POST" action="/admin/reviews/<%= report.website._id %>/delete">
+                <button class="btn-danger" type="submit">Slett post (admin)</button>
+              </form>
+            <% } %>
+
+            <% if (report.status !== "handled") { %>
+              <form method="POST" action="/admin/reports/<%= report._id %>/resolve">
+                <button class="btn-primary" type="submit">Marker som håndtert</button>
+              </form>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </main>
+</body>
+</html>

@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.render("index", { title: "WCAG Vurderingssystem" });
+  res.render("faq", { title: "FAQ" });
 });
 
 module.exports = router;
-
